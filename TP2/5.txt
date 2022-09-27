@@ -1,0 +1,2 @@
+enquanto em call_by_value apenas é passado o valor, em call_by_reference é passada uma referência,
+deste modo é possível alterar o valor

@@ -1,0 +1,6 @@
+1 - declara uma variável e passa o seu endereço para outra função - seguro
+2 - função com tipo de retorno int* retorna um apontador de tipo int que não foi alocado
+    dinamicamente - não seguro 
+3 - """""""""" que foi alocado dinamicamente (com malloc) - seguro
+4 - utilizado um function pointer (h) para chamar uma função f dentro de outra função g e obter
+    um resultado - seguro
