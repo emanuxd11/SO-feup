@@ -1,30 +1,18 @@
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
-//Returns the number of characters that were skipped to
-//find the needle or -1 in the case that it wasn't found
-int my_strstr(const char *__haystack, const char *__needle) {
-    for(int i = 0; i < strlen(__haystack); i++) {
-        if(strncmp(i + __haystack, __needle, strlen(__needle)) == 0) {
-            return i;
-        } 
+int strstrcnt(const char *haystack, const char *needle) {
+    int count = 0;
+
+    for(int i = 0; haystack[i] != '\0'; i++) {
+        int j;
+        for(j = 0; needle[j] != '\0' && needle[j] == haystack[i+j]; j++);
+        if(needle[j] == '\0') count++;
     }
-
-    return -1;
+    
+    return count;
 }
 
 int main(int argc, char *argv[]) {
-    int appearance = 0, charcnt;
-    char *cpy = strdup(argv[2]);
-
-    while(1) {
-        charcnt = my_strstr(cpy, argv[1]);
-        if(charcnt == -1) break;
-        
-        cpy += charcnt + strlen(argv[1]);
-        appearance++;
-    }
-
-    printf("String \"%s\" shows up in \"%s\" %d times\n", argv[1], argv[2], appearance);
+    printf("String \"%s\" shows up in \"%s\" %d times\n", argv[1], argv[2],
+        strstrcnt(argv[2], argv[1]));
 }
