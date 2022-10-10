@@ -87,6 +87,8 @@ void print_wc_opt(const char* filename, const char *opt) {
     }
 }
 
+//Adicionar: vários ficheiros, qualquer posição para as opções
+//e line count igual ao do wc
 int main(int argc, char *argv[]) {
     if(strcmp(argv[1], "-c") == 0 || 
        strcmp(argv[1], "-w") == 0 ||
