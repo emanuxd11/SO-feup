@@ -3,8 +3,11 @@
 #include <stdlib.h>
 
 #define LINE_MAX 200
+#define N_OPTIONS 3
 
-void print_bytec(FILE *f) {
+char optlist[N_OPTIONS] = {'l', 'w', 'c'};
+
+int count_byte(FILE *f) {
     char *fileline = malloc(sizeof(char) * LINE_MAX);
     int bytec = 0;
 
@@ -13,10 +16,9 @@ void print_bytec(FILE *f) {
     }
     free(fileline);
 
-    printf("%d ", bytec);
+    return bytec;
 }
-
-void print_wordc(FILE *f) {
+int count_word(FILE *f) {
     char *fileline = malloc(sizeof(char) * LINE_MAX);
     int wordc = 0;
 
@@ -33,10 +35,10 @@ void print_wordc(FILE *f) {
     }
     free(fileline);
 
-    printf("%d ", wordc);
+    return wordc;
 }
 
-void print_linec(FILE *f) {
+int count_line(FILE *f) {
     char *fileline = malloc(sizeof(char) * LINE_MAX);
     int linec = 0;
 
@@ -45,37 +47,50 @@ void print_linec(FILE *f) {
     }
     free(fileline);
 
-    printf("%d  ", linec);
+    return linec;
 }
 
-void print_wc_opt(const char* filename, const char opt) {
+//has to be in format " line  word byte filename"
+void print_wc_opt(const char* filename, const char *options, int optn) {
     FILE *f = fopen(filename, "r");
     if(f == NULL) {
         printf("Unable to open file %s\n", filename);
         return;
     }
 
-    if(opt == '\0') {
-        printf(" ");
-        print_linec(f);
-        rewind(f);
-        print_wordc(f);
-        rewind(f);
-        print_bytec(f);
-        printf("%s\n", filename);
+    if(options == NULL && optn == 0) {
+        printf(" %d ", count_line(f)); rewind(f);
+        printf(" %d ", count_word(f)); rewind(f);
+        printf("%d ", count_byte(f)); 
+        printf("%s\n", filename); 
+
+        if(fclose(f) != 0) {
+            printf("Unable to close file properly\n");
+        }
+        
         return;
     }
 
-    switch(opt) {
-        case 'c':
-            print_bytec(f);
-            break;
-        case 'w':
-            print_wordc(f);
-            break;
-        case 'l':
-            print_linec(f);
-            break;
+    //spaces should make it lined up with the above
+    for(int i = 0; i < N_OPTIONS; i++) {
+        for(int j = 0; j < optn; j++) {
+            if(options[j] != optlist[i]) continue;
+                
+            switch(options[j]) {
+                case 'l':
+                    if(optn > 1) printf(" ");
+                    printf("%d ", count_line(f));
+                    break;
+                case 'w':
+                    if(optn > 1) printf(" ");
+                    printf("%d ", count_word(f));
+                    break;
+                case 'c':
+                    printf("%d ", count_byte(f));
+                    break;
+            }
+        }
+        rewind(f);
     }
     printf("%s\n", filename);
 
@@ -88,7 +103,6 @@ char *findopt(int n, char *args[], int *retn) {
     if(n == 1) return NULL;
     if(args == NULL) return NULL;
 
-    char optlist[] = {'c', 'w', 'l'};
     int optn = 3;
     char *options = malloc(sizeof(char));
     *retn = 0;
@@ -138,47 +152,17 @@ char **findarguments(int n, char *args[], int *retn) {
     return arguments;
 }
 
+//can't enter same option more than once when adding to array -- 3
+//make invalid option error and --help -- 2
+//make prints line up between diff files -- 1
 int main(int argc, char *argv[]) {
     int optn = 0, argn = 0;
     char *options = findopt(argc, argv, &optn);
     char **arguments = findarguments(argc, argv, &argn);
 
     for(int i = 0; i < argn; i++) {
-        if(options == NULL) {
-            print_wc_opt(arguments[i], '\0');
-            continue;
-        }
-
-        for(int j = 0; j < optn; j++) {
-            print_wc_opt(arguments[i], options[j]);
-        }
+        print_wc_opt(arguments[i], options, optn);
     }
     if(arguments != NULL) free(arguments);
     if(options != NULL) free(options);
-
-
-    /*printf("Options:\n");
-    for(int i = 0; i < optn; i++) {
-        printf("%c\n", options[i]);
-    }
-    free(options);
-
-    printf("Args:\n");
-    for(int i = 0; i < argn; i++) {
-        printf("%s\n", arguments[i]);
-    }*/
-
-    /*if(strcmp(argv[1], "-c") == 0 || 
-       strcmp(argv[1], "-w") == 0 ||
-       strcmp(argv[1], "-l") == 0) {
-        print_wc_opt(argv[2], argv[1]);
-    } else if(argv[1][0] == '-') {
-        printf("mywc: invalid option -- '%c'\n", argv[1][1]);
-        printf("Valid options are \"-c\" and \"-w\" \"-l\" "
-        "for byte count, word count and line count respectively\n");
-        printf("Executing anyway...\n");
-        print_wc_opt(argv[2], NULL);
-    } else {
-        print_wc_opt(argv[1], NULL);
-    }*/
 }
