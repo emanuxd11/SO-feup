@@ -18,6 +18,7 @@ int count_byte(FILE *f) {
 
     return bytec;
 }
+
 int count_word(FILE *f) {
     char *fileline = malloc(sizeof(char) * LINE_MAX);
     int wordc = 0;
@@ -79,7 +80,7 @@ void print_wc_opt(const char* filename, const char *options, int optn) {
             switch(options[j]) {
                 case 'l':
                     if(optn > 1) printf(" ");
-                    printf("%d ", count_line(f));
+                    printf(" %d ", count_line(f));
                     break;
                 case 'w':
                     if(optn > 1) printf(" ");
@@ -103,7 +104,6 @@ char *findopt(int n, char *args[], int *retn) {
     if(n == 1) return NULL;
     if(args == NULL) return NULL;
 
-    int optn = 3;
     char *options = malloc(sizeof(char));
     *retn = 0;
 
@@ -111,13 +111,21 @@ char *findopt(int n, char *args[], int *retn) {
         if(args[i][0] != '-') continue;
 
         for(int j = 1; j < strlen(args[i]); j++) {
-            for(int k = 0; k < optn; k++) {
+            for(int k = 0; k < N_OPTIONS; k++) {
                 if(args[i][j] != optlist[k]) continue;
-
-                options = realloc(options, ((*retn) + 1) * sizeof(char));
-                if(options == NULL) return NULL;
                 
-                options[(*retn)++] = optlist[k];
+                int l;
+                for(l = 0; l < *retn; l++) {
+                    if(options[l] == optlist[k]) {
+                        break;
+                    }
+
+                }
+                if(l == *retn) {
+                    options = realloc(options, ((*retn) + 1) * sizeof(char));
+                    if(options == NULL) return NULL;
+                    options[(*retn)++] = optlist[k];
+                }
             }
         }
     }
@@ -139,6 +147,7 @@ char **findarguments(int n, char *args[], int *retn) {
 
     for(int i = 1; i < n; i++) {
         if(args[i][0] == '-') continue;
+
         arguments = realloc(arguments, ((*retn) + 1) * sizeof(char*));
         if(arguments == NULL) return NULL;
         arguments[(*retn)++] = args[i];
@@ -152,11 +161,11 @@ char **findarguments(int n, char *args[], int *retn) {
     return arguments;
 }
 
-//can't enter same option more than once when adding to array -- 3
+//add total count at the end -- 3
 //make invalid option error and --help -- 2
 //make prints line up between diff files -- 1
 int main(int argc, char *argv[]) {
-    int optn = 0, argn = 0;
+    int optn = 0, argn = 0; 
     char *options = findopt(argc, argv, &optn);
     char **arguments = findarguments(argc, argv, &argn);
 
