@@ -52,11 +52,11 @@ int main(int argc, char* argv[]) {
         char *str;
         const uint TIME_FMT = strlen("9999-12-31 12:59:59.123456789") + 1;
         char timestr[TIME_FMT];
-        if (timespec2str(timestr, sizeof(timestr), &info.st_mtim) != 0) {
+        if(timespec2str(timestr, sizeof(timestr), &info.st_mtim) != 0) {
             printf("timespec2str failed!\n");
             return EXIT_FAILURE;
         } else {
-            printf("Modify: time=%s\n", timestr);
+            printf("Modify: %s\n", timestr);
         }
         /******************************************************************/
         
