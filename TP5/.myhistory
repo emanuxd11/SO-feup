@@ -1,0 +1,1 @@
+gcc q7.c -o q7 -fsanitize=address -static-libasan
