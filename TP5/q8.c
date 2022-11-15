@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
 
             execvp(command, options);
 
-            /* if I get here "execvp" failed */
+            /* if I get here "execlp" failed */
             fprintf(stderr, "%s: couldn't exec %s: %s\n",
             argv[0], buf, strerror(errno));
 
