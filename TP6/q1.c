@@ -32,8 +32,8 @@ int main(int argc, char *argv[]) {
     } else if (pid > 0) {
         /* parent */
         close(fd[READ_END]);
-        printf("Parent process with pid %d\n", getpid());
-        printf("Messaging the child process (pid %d):\n", pid);
+        printf(">> Currently at parent process with pid %d\n", getpid());
+        printf("messaging the child process (pid %d)...\n\n", pid);
 
         int rd;
         while((rd = read(fileDesc, line, LINESIZE)) != 0) {
@@ -58,8 +58,8 @@ int main(int argc, char *argv[]) {
     } else {
         /* child */
         close(fd[WRITE_END]);
-        printf("Child process with pid %d\n", getpid());
-        printf("Receiving message from parent (pid %d):\n", getppid());
+        printf(">> Currently at child process with pid %d\n", getpid());
+        printf("Receiving message from parent (pid %d):\n\n", getppid());
         while ((nbytes = read(fd[READ_END], line, LINESIZE)) != 0) {
             if (nbytes < 0) {
                 fprintf(stderr, "Unable to read from pipe: %s\n", strerror(errno));
